@@ -1,7 +1,6 @@
 "use client";
 
 import { type FormEvent, useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getApps, initializeApp } from "firebase/app";
 import {
   getDatabase,
@@ -55,6 +54,7 @@ const hasFirebaseConfig =
   firebaseConfig.projectId.length > 0 &&
   firebaseConfig.appId.length > 0;
 const DELETE_ANIMATION_MS = 220;
+const ROOM_ID = "global";
 
 const getDatabaseInstance = () => {
   if (!hasFirebaseConfig) {
@@ -63,14 +63,6 @@ const getDatabaseInstance = () => {
 
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   return getDatabase(app);
-};
-
-const createRoomId = () => {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `room-${Math.random().toString(36).slice(2, 10)}`;
 };
 
 const SkullIcon = ({ className }: { className?: string }) => (
@@ -96,12 +88,7 @@ const SkullIcon = ({ className }: { className?: string }) => (
 );
 
 export default function HomeClient() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const roomParam = searchParams.get("room");
-
-  const [roomId, setRoomId] = useState<string | null>(null);
+  const roomId = ROOM_ID;
   const [items, setItems] = useState<ListItem[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [inputQuantity, setInputQuantity] = useState("1");
@@ -126,18 +113,7 @@ export default function HomeClient() {
   }, []);
 
   useEffect(() => {
-    if (roomParam) {
-      setRoomId(roomParam);
-      return;
-    }
-
-    const nextRoom = createRoomId();
-    setRoomId(nextRoom);
-    router.replace(`${pathname}?room=${nextRoom}`);
-  }, [pathname, roomParam, router]);
-
-  useEffect(() => {
-    if (!roomId || !hasFirebaseConfig) {
+    if (!hasFirebaseConfig) {
       setIsLoading(false);
       return;
     }
@@ -179,12 +155,12 @@ export default function HomeClient() {
   }, [items]);
 
   const shareLink = useMemo(() => {
-    if (!roomId || !origin) {
+    if (!origin) {
       return "";
     }
 
-    return `${origin}${pathname}?room=${roomId}`;
-  }, [origin, pathname, roomId]);
+    return origin;
+  }, [origin]);
 
   const remainingCount = items.filter((item) => !item.completed).length;
 
@@ -372,15 +348,9 @@ export default function HomeClient() {
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
                 <p className="mt-3 max-w-2xl text-base text-[#5b2aaa]">
-                  Add, check, and delete items while your friends see updates
-                  instantly. Drop the room link to invite anyone.
+                  One shared list for everyone. Add, check, and delete items
+                  together in real time.
                 </p>
-              </div>
-              <div className="rounded-2xl border border-[#bfa7ff] bg-white/80 px-4 py-3 text-sm text-[#5b2aaa] shadow-[0_10px_30px_rgba(107,44,255,0.18)] backdrop-blur-sm">
-                Room:{" "}
-                <span className="font-semibold text-[#2a1248]">
-                  {roomId ?? "Generating..."}
-                </span>
               </div>
             </div>
           </header>
@@ -438,12 +408,13 @@ export default function HomeClient() {
                 <div className="flex flex-wrap items-center gap-4 text-sm text-[#c6a6ff]">
                   <span>{items.length} items</span>
                   <span>{remainingCount} remaining</span>
+                  <span>Shared list</span>
                   {isLoading && <span>Syncing...</span>}
                 </div>
                 <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
                   <input
                     readOnly
-                    value={shareLink || "Preparing share link..."}
+                    value={shareLink || "Preparing link..."}
                     className="h-11 w-full rounded-xl border border-[#6b2cff]/40 bg-black/70 px-4 text-sm text-[#f8f4ff]/80 md:w-[320px]"
                   />
                   <button
