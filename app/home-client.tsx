@@ -337,14 +337,16 @@ export default function HomeClient() {
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
             <div className="flex flex-wrap items-center gap-3 text-sm uppercase tracking-[0.35em] text-[#5b2aaa]">
-              <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-4 py-1 text-[#5b2aaa]">
+              <span className="order-2 ml-auto rounded-full border border-[#bfa7ff] bg-white/70 px-4 py-1 text-[#5b2aaa] sm:order-none sm:ml-0">
                 Kuromi List
               </span>
-              <span className="text-[#d065a8]">Realtime Gothic-Pastel</span>
+              <span className="order-1 w-full text-[#d065a8] sm:order-none sm:w-auto">
+                Realtime Gothic-Pastel
+              </span>
             </div>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1 className="text-[30px] leading-snug text-[#2a1248] sm:text-5xl">
+                <h1 className="max-w-[18ch] text-[22px] leading-snug text-[#2a1248] sm:max-w-none sm:text-5xl">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm text-[#5b2aaa] sm:text-base">
@@ -362,7 +364,7 @@ export default function HomeClient() {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <form
                   onSubmit={handleAdd}
-                  className="flex w-full flex-col gap-4 md:flex-row md:items-center"
+                  className="flex w-full flex-col gap-3 md:flex-row md:items-center"
                 >
                   <div className="flex w-full flex-row gap-3 md:flex-1">
                     <input
@@ -389,46 +391,48 @@ export default function HomeClient() {
                       />
                     </div>
                   </div>
-                  <button
-                    type="submit"
-                    className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#6b2cff] px-6 text-base font-semibold text-white shadow-[0_0_18px_rgba(140,75,255,0.6)] transition hover:bg-[#8c4bff] md:w-auto"
-                    disabled={!hasFirebaseConfig}
-                  >
-                    <SkullIcon className="h-6 w-6 text-white" />
-                    Add Item
-                  </button>
+                  <div className="flex w-full max-w-[360px] items-center gap-3 self-center md:w-auto md:max-w-none md:self-auto">
+                    <button
+                      type="submit"
+                      className="flex h-12 flex-1 items-center justify-center gap-3 rounded-2xl bg-[#6b2cff] px-4 text-sm font-semibold text-white shadow-[0_0_18px_rgba(140,75,255,0.6)] transition hover:bg-[#8c4bff] sm:h-14 sm:px-6 sm:text-base"
+                      disabled={!hasFirebaseConfig}
+                    >
+                      <SkullIcon className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleClearAll}
+                      className="h-12 w-[120px] rounded-2xl border border-[#f5b0de]/50 px-4 text-xs font-semibold text-[#f5b0de] transition hover:border-[#f5b0de] hover:text-white sm:h-14 sm:w-[140px] sm:px-5 sm:text-sm"
+                      disabled={!hasFirebaseConfig || items.length === 0}
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </form>
-                <button
-                  type="button"
-                  onClick={handleClearAll}
-                  className="h-12 rounded-2xl border border-[#f5b0de]/50 px-5 text-sm font-semibold text-[#f5b0de] transition hover:border-[#f5b0de] hover:text-white"
-                  disabled={!hasFirebaseConfig || items.length === 0}
-                >
-                  Clear All
-                </button>
               </div>
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex w-full items-center gap-2">
+                  <input
+                    readOnly
+                    value={shareLink || "Preparing link..."}
+                    className="h-9 min-w-0 flex-1 rounded-xl border border-[#6b2cff]/40 bg-black/70 px-3 text-xs text-[#f8f4ff]/80 sm:h-11 sm:px-4 sm:text-sm md:w-[320px]"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="h-9 rounded-xl bg-[#f5b0de] px-3 text-xs font-semibold text-[#1a0f2e] transition hover:bg-[#f8c8ee] sm:h-11 sm:px-4 sm:text-sm"
+                    disabled={!shareLink}
+                  >
+                    {copyState === "copied" ? "Copied!" : "Copy"}
+                  </button>
+                </div>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-[#c6a6ff]">
                   <span>{items.length} items</span>
                   <span>{remainingCount} remaining</span>
                   <span>Shared list</span>
                   {isLoading && <span>Syncing...</span>}
-                </div>
-                <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
-                  <input
-                    readOnly
-                    value={shareLink || "Preparing link..."}
-                    className="h-11 w-full rounded-xl border border-[#6b2cff]/40 bg-black/70 px-4 text-sm text-[#f8f4ff]/80 md:w-[320px]"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleCopy}
-                    className="h-11 rounded-xl bg-[#f5b0de] px-4 text-sm font-semibold text-[#1a0f2e] transition hover:bg-[#f8c8ee]"
-                    disabled={!shareLink}
-                  >
-                    {copyState === "copied" ? "Copied!" : "Copy Link"}
-                  </button>
                 </div>
               </div>
 
