@@ -336,17 +336,17 @@ export default function HomeClient() {
       <div className="relative z-10 min-h-screen w-full px-6 py-8 sm:px-10 sm:py-12">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
-            <div className="flex items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:justify-start sm:text-sm">
+            <div className="flex w-full items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:justify-start sm:text-sm">
               <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-3 py-1 text-[10px] text-[#5b2aaa] sm:px-4 sm:text-sm">
                 Kuromi List
               </span>
             </div>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1 className="max-w-[16ch] text-right text-[20px] leading-snug text-[#2a1248] sm:max-w-none sm:text-left sm:text-5xl">
+                <h1 className="ml-auto max-w-[22ch] text-right text-[20px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
-                <p className="mt-3 max-w-2xl text-right text-[12px] text-[#5b2aaa] sm:text-left sm:text-base">
+                <p className="mt-3 ml-auto max-w-2xl text-right text-[12px] text-[#5b2aaa] sm:ml-0 sm:text-left sm:text-base">
                   One shared list for everyone. Add, check, and delete items
                   together in real time.
                 </p>
@@ -354,7 +354,7 @@ export default function HomeClient() {
             </div>
           </header>
 
-          <section className="relative overflow-hidden rounded-[32px] border border-[#6b2cff]/40 bg-black/60 shadow-[0_35px_80px_rgba(11,6,20,0.65)]">
+          <section className="-mt-3 relative overflow-hidden rounded-[32px] border border-[#6b2cff]/40 bg-black/60 shadow-[0_35px_80px_rgba(11,6,20,0.65)] sm:mt-0">
             <div className="absolute inset-0 kuromi-pattern opacity-60" />
             <div className="absolute inset-0 border border-[#8c4bff]/45 glow-pulse" />
             <div className="relative z-10 flex flex-col gap-6 p-6 sm:p-10">
@@ -451,7 +451,7 @@ export default function HomeClient() {
                     return (
                       <li
                         key={item.id}
-                        className={`grid grid-cols-[38px_minmax(0,1fr)_auto_34px] items-center gap-3 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-5 py-4 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:grid-cols-[48px_minmax(0,1fr)_auto_40px] sm:px-4 sm:py-3 ${
+                        className={`grid grid-cols-[36px_minmax(0,1fr)_96px_32px] items-center gap-2 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-4 py-4 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:grid-cols-[48px_minmax(0,1fr)_auto_40px] sm:gap-3 sm:px-4 sm:py-3 ${
                           isRemoving
                             ? "animate-[slideAway_220ms_ease-in_forwards]"
                             : "animate-[floatIn_520ms_ease-out]"
@@ -472,7 +472,7 @@ export default function HomeClient() {
                         </button>
                         <div className="min-w-0 flex-1">
                           <p
-                            className={`break-keep text-[15px] leading-snug sm:text-lg ${
+                            className={`break-words pr-1 text-[15px] leading-snug sm:text-lg ${
                               item.completed
                                 ? "text-[#c6a6ff] line-through opacity-60"
                                 : "text-[#f8f4ff]"
@@ -481,7 +481,7 @@ export default function HomeClient() {
                             {item.text}
                           </p>
                         </div>
-                        <div className="flex flex-shrink-0 items-center gap-2">
+                        <div className="flex flex-shrink-0 items-center gap-1 sm:gap-2">
                           <button
                             type="button"
                             onClick={() =>
@@ -515,7 +515,7 @@ export default function HomeClient() {
                                 handleQuantityCommit(item);
                               }
                             }}
-                            className="h-8 w-12 rounded-lg border border-[#6b2cff]/40 bg-black/60 px-2 text-center text-sm text-[#f8f4ff] focus:border-[#f5b0de] focus:outline-none sm:h-9 sm:w-16"
+                            className="h-8 w-10 rounded-lg border border-[#6b2cff]/40 bg-black/60 px-1 text-center text-xs text-[#f8f4ff] focus:border-[#f5b0de] focus:outline-none sm:h-9 sm:w-16 sm:px-2 sm:text-sm"
                           />
                           <button
                             type="button"
