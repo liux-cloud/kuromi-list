@@ -364,15 +364,15 @@ export default function HomeClient() {
                   onSubmit={handleAdd}
                   className="flex w-full flex-col gap-4 md:flex-row md:items-center"
                 >
-                  <div className="flex w-full flex-col gap-3 sm:flex-row md:flex-1">
+                  <div className="flex w-full flex-row gap-3 md:flex-1">
                     <input
                       value={inputValue}
                       onChange={(event) => setInputValue(event.target.value)}
                       placeholder="What should we take home?"
-                      className="h-14 w-full flex-1 rounded-2xl border border-[#6b2cff]/60 bg-black/60 px-5 text-lg text-[#f8f4ff] placeholder:text-[#c6a6ff]/70 focus:border-[#f5b0de] focus:outline-none focus:ring-2 focus:ring-[#f5b0de]/40"
+                      className="h-14 min-w-0 flex-1 rounded-2xl border border-[#6b2cff]/60 bg-black/60 px-5 text-lg text-[#f8f4ff] placeholder:text-[#c6a6ff]/70 focus:border-[#f5b0de] focus:outline-none focus:ring-2 focus:ring-[#f5b0de]/40"
                       disabled={!hasFirebaseConfig}
                     />
-                    <div className="flex w-full items-center gap-3 rounded-2xl border border-[#6b2cff]/60 bg-black/60 px-4 text-[#f8f4ff] sm:w-[140px]">
+                    <div className="flex h-14 w-[120px] items-center gap-3 rounded-2xl border border-[#6b2cff]/60 bg-black/60 px-4 text-[#f8f4ff] sm:w-[140px]">
                       <span className="text-sm uppercase tracking-[0.2em] text-[#c6a6ff]">
                         Qty
                       </span>
@@ -384,7 +384,7 @@ export default function HomeClient() {
                         onChange={(event) =>
                           setInputQuantity(event.target.value)
                         }
-                        className="h-12 w-16 bg-transparent text-lg text-[#f8f4ff] focus:outline-none"
+                        className="h-10 w-12 bg-transparent text-lg text-[#f8f4ff] focus:outline-none"
                         disabled={!hasFirebaseConfig}
                       />
                     </div>
@@ -450,95 +450,89 @@ export default function HomeClient() {
                     return (
                       <li
                         key={item.id}
-                        className={`flex flex-col gap-3 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-4 py-3 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:flex-row sm:items-center ${
+                        className={`flex items-start gap-3 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-4 py-3 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:items-center ${
                           isRemoving
                             ? "animate-[slideAway_220ms_ease-in_forwards]"
                             : "animate-[floatIn_520ms_ease-out]"
                         }`}
                         style={{ animationDelay: `${index * 60}ms` }}
                       >
-                        <div className="flex w-full items-center gap-4">
-                          <button
-                            type="button"
-                            onClick={() => handleToggle(item)}
-                            aria-pressed={item.completed}
-                            className={`flex h-12 w-12 items-center justify-center rounded-xl border ${
+                        <button
+                          type="button"
+                          onClick={() => handleToggle(item)}
+                          aria-pressed={item.completed}
+                          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border sm:h-12 sm:w-12 ${
+                            item.completed
+                              ? "border-[#8c4bff] bg-[#8c4bff] text-white shadow-[0_0_16px_rgba(140,75,255,0.8)]"
+                              : "border-[#c6a6ff]/50 bg-black/60 text-[#c6a6ff]"
+                          }`}
+                        >
+                          <SkullIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </button>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`break-words text-base leading-snug sm:text-lg ${
                               item.completed
-                                ? "border-[#8c4bff] bg-[#8c4bff] text-white shadow-[0_0_16px_rgba(140,75,255,0.8)]"
-                                : "border-[#c6a6ff]/50 bg-black/60 text-[#c6a6ff]"
+                                ? "text-[#c6a6ff] line-through opacity-60"
+                                : "text-[#f8f4ff]"
                             }`}
                           >
-                            <SkullIcon className="h-6 w-6" />
-                          </button>
-                          <div className="min-w-0 flex-1">
-                            <p
-                              className={`text-lg ${
-                                item.completed
-                                  ? "text-[#c6a6ff] line-through opacity-60"
-                                  : "text-[#f8f4ff]"
-                              }`}
-                            >
-                              {item.text}
-                            </p>
-                          </div>
+                            {item.text}
+                          </p>
                         </div>
-                        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateQuantity(
-                                  item,
-                                  Math.max(1, item.quantity - 1),
-                                )
-                              }
-                              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de]"
-                              aria-label={`Decrease quantity for ${item.text}`}
-                            >
-                              -
-                            </button>
-                            <input
-                              type="number"
-                              min={1}
-                              step={1}
-                              value={
-                                quantityDrafts[item.id] ?? String(item.quantity)
-                              }
-                              onChange={(event) =>
-                                setQuantityDrafts((prev) => ({
-                                  ...prev,
-                                  [item.id]: event.target.value,
-                                }))
-                              }
-                              onBlur={() => handleQuantityCommit(item)}
-                              onKeyDown={(event) => {
-                                if (event.key === "Enter") {
-                                  event.preventDefault();
-                                  handleQuantityCommit(item);
-                                }
-                              }}
-                              className="h-9 w-16 rounded-lg border border-[#6b2cff]/40 bg-black/60 px-2 text-center text-sm text-[#f8f4ff] focus:border-[#f5b0de] focus:outline-none"
-                            />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateQuantity(item, item.quantity + 1)
-                              }
-                              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de]"
-                              aria-label={`Increase quantity for ${item.text}`}
-                            >
-                              +
-                            </button>
-                          </div>
+                        <div className="flex flex-shrink-0 items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => handleDelete(item.id)}
-                            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#f5b0de]/50 text-[#f5b0de] transition hover:border-[#f5b0de] hover:text-white"
-                            aria-label={`Delete ${item.text}`}
+                            onClick={() =>
+                              updateQuantity(
+                                item,
+                                Math.max(1, item.quantity - 1),
+                              )
+                            }
+                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de] sm:h-8 sm:w-8"
+                            aria-label={`Decrease quantity for ${item.text}`}
                           >
-                            <SkullIcon className="h-5 w-5" />
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min={1}
+                            step={1}
+                            value={
+                              quantityDrafts[item.id] ?? String(item.quantity)
+                            }
+                            onChange={(event) =>
+                              setQuantityDrafts((prev) => ({
+                                ...prev,
+                                [item.id]: event.target.value,
+                              }))
+                            }
+                            onBlur={() => handleQuantityCommit(item)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                event.preventDefault();
+                                handleQuantityCommit(item);
+                              }
+                            }}
+                            className="h-8 w-12 rounded-lg border border-[#6b2cff]/40 bg-black/60 px-2 text-center text-sm text-[#f8f4ff] focus:border-[#f5b0de] focus:outline-none sm:h-9 sm:w-16"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item, item.quantity + 1)}
+                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de] sm:h-8 sm:w-8"
+                            aria-label={`Increase quantity for ${item.text}`}
+                          >
+                            +
                           </button>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(item.id)}
+                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-[#f5b0de]/50 text-[#f5b0de] transition hover:border-[#f5b0de] hover:text-white sm:h-10 sm:w-10"
+                          aria-label={`Delete ${item.text}`}
+                        >
+                          <SkullIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                        </button>
                       </li>
                     );
                   })
