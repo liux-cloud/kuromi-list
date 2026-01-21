@@ -321,7 +321,7 @@ export default function HomeClient() {
     <div className="relative min-h-screen overflow-hidden kuromi-candy-bg">
       <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[380px] w-[150%] -translate-x-1/2 -translate-y-[55%] rounded-[100%] bg-[#f7f1ff] sm:h-[460px] md:h-[520px]" />
       <div className="pointer-events-none absolute inset-0 z-0 kuromi-candy-pattern opacity-50" />
-      <div className="pointer-events-none absolute bottom-0 left-1/2 z-0 w-[220px] -translate-x-1/2 translate-y-6 sm:w-[280px] sm:translate-y-8 md:w-[360px] lg:w-[420px]">
+      <div className="pointer-events-none absolute left-4 top-4 z-0 w-[120px] sm:bottom-0 sm:left-1/2 sm:top-auto sm:w-[280px] sm:-translate-x-1/2 sm:translate-y-6 md:w-[360px] lg:w-[420px]">
         <img
           src="/kuromi-bg/3-clean.png"
           alt=""
