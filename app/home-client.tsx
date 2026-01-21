@@ -319,7 +319,7 @@ export default function HomeClient() {
 
   return (
     <div className="relative min-h-screen overflow-hidden kuromi-candy-bg">
-      <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[560px] w-[150%] -translate-x-1/2 -translate-y-[40%] rounded-[100%] bg-[#f7f1ff] sm:h-[660px] md:h-[740px]" />
+      <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[380px] w-[150%] -translate-x-1/2 -translate-y-[55%] rounded-[100%] bg-[#f7f1ff] sm:h-[460px] md:h-[520px]" />
       <div className="pointer-events-none absolute inset-0 z-0 kuromi-candy-pattern opacity-50" />
       <div className="pointer-events-none absolute bottom-0 left-1/2 z-0 w-[220px] -translate-x-1/2 translate-y-6 sm:w-[280px] sm:translate-y-8 md:w-[360px] lg:w-[420px]">
         <img
@@ -336,20 +336,17 @@ export default function HomeClient() {
       <div className="relative z-10 min-h-screen w-full px-6 py-8 sm:px-10 sm:py-12">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
-            <div className="flex flex-wrap items-center gap-3 text-sm uppercase tracking-[0.35em] text-[#5b2aaa]">
-              <span className="order-2 ml-auto rounded-full border border-[#bfa7ff] bg-white/70 px-4 py-1 text-[#5b2aaa] sm:order-none sm:ml-0">
+            <div className="flex items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:justify-start sm:text-sm">
+              <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-3 py-1 text-[10px] text-[#5b2aaa] sm:px-4 sm:text-sm">
                 Kuromi List
-              </span>
-              <span className="order-1 w-full text-[#d065a8] sm:order-none sm:w-auto">
-                Realtime Gothic-Pastel
               </span>
             </div>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1 className="max-w-[18ch] text-[22px] leading-snug text-[#2a1248] sm:max-w-none sm:text-5xl">
+                <h1 className="max-w-[16ch] text-right text-[20px] leading-snug text-[#2a1248] sm:max-w-none sm:text-left sm:text-5xl">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm text-[#5b2aaa] sm:text-base">
+                <p className="mt-3 max-w-2xl text-right text-[12px] text-[#5b2aaa] sm:text-left sm:text-base">
                   One shared list for everyone. Add, check, and delete items
                   together in real time.
                 </p>
@@ -454,7 +451,7 @@ export default function HomeClient() {
                     return (
                       <li
                         key={item.id}
-                        className={`flex items-start gap-3 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-4 py-3 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:items-center ${
+                        className={`grid grid-cols-[38px_minmax(0,1fr)_auto_34px] items-center gap-3 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-5 py-4 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:grid-cols-[48px_minmax(0,1fr)_auto_40px] sm:px-4 sm:py-3 ${
                           isRemoving
                             ? "animate-[slideAway_220ms_ease-in_forwards]"
                             : "animate-[floatIn_520ms_ease-out]"
@@ -465,17 +462,17 @@ export default function HomeClient() {
                           type="button"
                           onClick={() => handleToggle(item)}
                           aria-pressed={item.completed}
-                          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border sm:h-12 sm:w-12 ${
+                          className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border sm:h-12 sm:w-12 ${
                             item.completed
                               ? "border-[#8c4bff] bg-[#8c4bff] text-white shadow-[0_0_16px_rgba(140,75,255,0.8)]"
                               : "border-[#c6a6ff]/50 bg-black/60 text-[#c6a6ff]"
                           }`}
                         >
-                          <SkullIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                          <SkullIcon className="h-4 w-4 sm:h-6 sm:w-6" />
                         </button>
                         <div className="min-w-0 flex-1">
                           <p
-                            className={`break-words text-base leading-snug sm:text-lg ${
+                            className={`break-keep text-[15px] leading-snug sm:text-lg ${
                               item.completed
                                 ? "text-[#c6a6ff] line-through opacity-60"
                                 : "text-[#f8f4ff]"
