@@ -447,16 +447,16 @@ export default function HomeClient() {
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
             <div className="ml-auto flex w-full items-center justify-end gap-2 text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:text-sm">
-              <button
-                type="button"
-                onClick={() => setIsHistoryOpen(true)}
-                className="rounded-full border border-[#8c4bff]/60 bg-white/70 px-3 py-1 text-[10px] font-semibold text-[#5b2aaa] transition hover:border-[#f5b0de] hover:text-[#2a1248] sm:px-4 sm:text-sm"
-              >
-                履歴
-              </button>
               <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-3 py-1 text-[10px] text-[#5b2aaa] sm:px-4 sm:text-sm">
                 Kuromi List
               </span>
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(true)}
+                className="rounded-full border border-[#f5b0de]/80 bg-[#fff0f8] px-3 py-1 text-[10px] font-semibold text-[#8c4bff] transition hover:border-[#8c4bff] hover:text-[#2a1248] sm:px-4 sm:text-sm"
+              >
+                History
+              </button>
             </div>
             <div className="flex w-full flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="w-full">
