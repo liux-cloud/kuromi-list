@@ -354,10 +354,10 @@ export default function HomeClient() {
             </div>
             <div className="flex w-full flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="w-full">
-                <h1 className="ml-auto max-w-[24ch] text-right text-[18px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
+                <h1 className="ml-auto max-w-[22ch] pl-14 text-right text-[16px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl sm:pl-0">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
-                <p className="mt-3 ml-auto max-w-[24ch] text-right text-[12px] text-[#5b2aaa] sm:ml-0 sm:max-w-2xl sm:text-left sm:text-base">
+                <p className="mt-3 ml-auto max-w-[22ch] pl-14 text-right text-[11px] text-[#5b2aaa] sm:ml-0 sm:max-w-2xl sm:text-left sm:text-base sm:pl-0">
                   One shared list for everyone. Add, check, and delete items
                   together in real time.
                 </p>
