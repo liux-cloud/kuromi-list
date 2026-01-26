@@ -332,7 +332,7 @@ export default function HomeClient() {
     <div className="relative min-h-screen overflow-hidden kuromi-candy-bg">
       <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[380px] w-[150%] -translate-x-1/2 -translate-y-[55%] rounded-[100%] bg-[#f7f1ff] sm:h-[460px] md:h-[520px]" />
       <div className="pointer-events-none absolute inset-0 z-0 kuromi-candy-pattern opacity-50" />
-      <div className="pointer-events-none absolute left-4 top-4 z-0 w-[120px] sm:bottom-0 sm:left-1/2 sm:top-auto sm:w-[280px] sm:-translate-x-1/2 sm:translate-y-6 md:w-[360px] lg:w-[420px]">
+      <div className="pointer-events-none absolute left-2 top-2 z-0 w-[96px] sm:bottom-0 sm:left-1/2 sm:top-auto sm:w-[280px] sm:-translate-x-1/2 sm:translate-y-6 md:w-[360px] lg:w-[420px]">
         <img
           src="/kuromi-bg/3-clean.png"
           alt=""
@@ -352,8 +352,8 @@ export default function HomeClient() {
                 Kuromi List
               </span>
             </div>
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div>
+            <div className="flex w-full flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div className="w-full">
                 <h1 className="ml-auto max-w-[26ch] text-right text-[20px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
