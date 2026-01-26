@@ -20,11 +20,24 @@ type ListItem = {
   createdAt: number;
 };
 
+type HistoryItem = {
+  id: string;
+  text: string;
+  quantity: number;
+  deletedAt: number;
+};
+
 type StoredItem = {
   text?: string;
   completed?: boolean;
   quantity?: number;
   createdAt?: number;
+};
+
+type StoredHistoryItem = {
+  text?: string;
+  quantity?: number;
+  deletedAt?: number;
 };
 
 type FirebaseConfig = {
@@ -54,6 +67,7 @@ const hasFirebaseConfig =
   firebaseConfig.projectId.length > 0 &&
   firebaseConfig.appId.length > 0;
 const DELETE_ANIMATION_MS = 220;
+const HISTORY_RETENTION_MS = 1000 * 60 * 60 * 24 * 90;
 const ROOM_ID = "global";
 
 const getDatabaseInstance = () => {
@@ -90,6 +104,7 @@ const SkullIcon = ({ className }: { className?: string }) => (
 export default function HomeClient() {
   const roomId = ROOM_ID;
   const [items, setItems] = useState<ListItem[]>([]);
+  const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [inputQuantity, setInputQuantity] = useState("1");
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +115,7 @@ export default function HomeClient() {
   const [origin, setOrigin] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
   const [pendingDelete, setPendingDelete] = useState<ListItem | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const normalizeQuantity = (value: string | number) => {
     const parsed = Math.floor(Number(value));
@@ -107,6 +123,20 @@ export default function HomeClient() {
       return 1;
     }
     return parsed;
+  };
+
+  const formatJst = (timestamp: number) => {
+    if (!timestamp) {
+      return "—";
+    }
+    return new Intl.DateTimeFormat("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(timestamp));
   };
 
   useEffect(() => {
@@ -140,6 +170,51 @@ export default function HomeClient() {
       nextItems.sort((a, b) => a.createdAt - b.createdAt);
       setItems(nextItems);
       setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [roomId]);
+
+  useEffect(() => {
+    if (!hasFirebaseConfig) {
+      return;
+    }
+
+    const database = getDatabaseInstance();
+    if (!database) {
+      return;
+    }
+
+    const historyRef = ref(database, `rooms/${roomId}/history`);
+    const unsubscribe = onValue(historyRef, (snapshot) => {
+      const value = (snapshot.val() ?? {}) as Record<string, StoredHistoryItem>;
+      const cutoff = Date.now() - HISTORY_RETENTION_MS;
+      const staleIds: string[] = [];
+      const nextHistory = Object.entries(value)
+        .map(([id, item]) => {
+          const deletedAt = Number(item.deletedAt ?? 0);
+          if (deletedAt && deletedAt < cutoff) {
+            staleIds.push(id);
+          }
+          return {
+            id,
+            text: item.text ?? "",
+            quantity: normalizeQuantity(item.quantity ?? 1),
+            deletedAt,
+          };
+        })
+        .filter((item) => item.deletedAt >= cutoff)
+        .sort((a, b) => b.deletedAt - a.deletedAt);
+
+      setHistoryItems(nextHistory);
+
+      if (staleIds.length > 0) {
+        const updates: Record<string, null> = {};
+        staleIds.forEach((id) => {
+          updates[id] = null;
+        });
+        update(historyRef, updates);
+      }
     });
 
     return () => unsubscribe();
@@ -258,7 +333,7 @@ export default function HomeClient() {
     await updateQuantity(item, nextQuantity);
   };
 
-  const handleDelete = async (itemId: string) => {
+  const handleDelete = async (item: ListItem) => {
     if (!roomId) {
       return;
     }
@@ -268,16 +343,26 @@ export default function HomeClient() {
       return;
     }
 
-    setDeletingIds((prev) => ({ ...prev, [itemId]: true }));
+    if (item.completed) {
+      const historyRef = ref(database, `rooms/${roomId}/history`);
+      const historyEntry = push(historyRef);
+      await set(historyEntry, {
+        text: item.text,
+        quantity: item.quantity,
+        deletedAt: Date.now(),
+      });
+    }
+
+    setDeletingIds((prev) => ({ ...prev, [item.id]: true }));
 
     window.setTimeout(async () => {
       try {
-        const itemRef = ref(database, `rooms/${roomId}/items/${itemId}`);
+        const itemRef = ref(database, `rooms/${roomId}/items/${item.id}`);
         await remove(itemRef);
       } finally {
         setDeletingIds((prev) => {
           const next = { ...prev };
-          delete next[itemId];
+          delete next[item.id];
           return next;
         });
       }
@@ -289,9 +374,9 @@ export default function HomeClient() {
       return;
     }
 
-    const itemId = pendingDelete.id;
+    const item = pendingDelete;
     setPendingDelete(null);
-    await handleDelete(itemId);
+    await handleDelete(item);
   };
 
   const handleClearAll = async () => {
@@ -309,6 +394,20 @@ export default function HomeClient() {
     const database = getDatabaseInstance();
     if (!database) {
       return;
+    }
+
+    const completedItems = items.filter((item) => item.completed);
+    if (completedItems.length > 0) {
+      const historyRef = ref(database, `rooms/${roomId}/history`);
+      await Promise.all(
+        completedItems.map((item) =>
+          set(push(historyRef), {
+            text: item.text,
+            quantity: item.quantity,
+            deletedAt: Date.now(),
+          }),
+        ),
+      );
     }
 
     await remove(ref(database, `rooms/${roomId}/items`));
@@ -347,7 +446,14 @@ export default function HomeClient() {
       <div className="relative z-10 min-h-screen w-full px-6 py-8 sm:px-10 sm:py-12">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
-            <div className="ml-auto flex w-full max-w-[24ch] items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:ml-0 sm:max-w-none sm:justify-start sm:text-sm">
+            <div className="ml-auto flex w-full items-center justify-end gap-2 text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:text-sm">
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(true)}
+                className="rounded-full border border-[#8c4bff]/60 bg-white/70 px-3 py-1 text-[10px] font-semibold text-[#5b2aaa] transition hover:border-[#f5b0de] hover:text-[#2a1248] sm:px-4 sm:text-sm"
+              >
+                履歴
+              </button>
               <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-3 py-1 text-[10px] text-[#5b2aaa] sm:px-4 sm:text-sm">
                 Kuromi List
               </span>
@@ -595,6 +701,60 @@ export default function HomeClient() {
               >
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isHistoryOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default bg-black/70 backdrop-blur-sm"
+            onClick={() => setIsHistoryOpen(false)}
+            aria-label="Close history"
+          />
+          <div className="relative w-full max-w-md rounded-[28px] border border-[#8c4bff]/50 bg-[#120b24]/95 p-6 text-[#f8f4ff] shadow-[0_20px_40px_rgba(11,6,20,0.7)]">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold text-[#f8f4ff]">
+                購入履歴
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(false)}
+                className="rounded-full border border-[#8c4bff]/50 px-3 py-1 text-xs font-semibold text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-white"
+              >
+                閉じる
+              </button>
+            </div>
+            <div className="mt-4 max-h-[55vh] space-y-3 overflow-y-auto">
+              {historyItems.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-[#8c4bff]/40 px-4 py-6 text-center text-sm text-[#c6a6ff]">
+                  履歴はまだありません。
+                </div>
+              ) : (
+                historyItems.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="rounded-2xl border border-[#6b2cff]/40 bg-[#1a0f2e]/60 px-4 py-3"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-[#f8f4ff]">
+                        {entry.text}
+                      </span>
+                      <span className="text-xs text-[#c6a6ff]">
+                        x{entry.quantity}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-xs text-[#c6a6ff]">
+                      {formatJst(entry.deletedAt)}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
