@@ -332,7 +332,7 @@ export default function HomeClient() {
     <div className="relative min-h-screen overflow-hidden kuromi-candy-bg">
       <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[380px] w-[150%] -translate-x-1/2 -translate-y-[55%] rounded-[100%] bg-[#f7f1ff] sm:h-[460px] md:h-[520px]" />
       <div className="pointer-events-none absolute inset-0 z-0 kuromi-candy-pattern opacity-50" />
-      <div className="pointer-events-none absolute left-2 top-2 z-0 w-[96px] sm:bottom-0 sm:left-1/2 sm:top-auto sm:w-[280px] sm:-translate-x-1/2 sm:translate-y-6 md:w-[360px] lg:w-[420px]">
+      <div className="pointer-events-none absolute left-4 top-4 z-0 w-[120px] sm:bottom-0 sm:left-1/2 sm:top-auto sm:w-[280px] sm:-translate-x-1/2 sm:translate-y-6 md:w-[360px] lg:w-[420px]">
         <img
           src="/kuromi-bg/3-clean.png"
           alt=""
@@ -347,17 +347,17 @@ export default function HomeClient() {
       <div className="relative z-10 min-h-screen w-full px-6 py-8 sm:px-10 sm:py-12">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
-            <div className="ml-auto flex w-full max-w-[26ch] items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:ml-0 sm:max-w-none sm:justify-start sm:text-sm">
+            <div className="ml-auto flex w-full max-w-[24ch] items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:ml-0 sm:max-w-none sm:justify-start sm:text-sm">
               <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-3 py-1 text-[10px] text-[#5b2aaa] sm:px-4 sm:text-sm">
                 Kuromi List
               </span>
             </div>
             <div className="flex w-full flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="w-full">
-                <h1 className="ml-auto max-w-[26ch] text-right text-[20px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
+                <h1 className="ml-auto max-w-[24ch] text-right text-[18px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
-                <p className="mt-3 ml-auto max-w-[26ch] text-right text-[12px] text-[#5b2aaa] sm:ml-0 sm:max-w-2xl sm:text-left sm:text-base">
+                <p className="mt-3 ml-auto max-w-[24ch] text-right text-[12px] text-[#5b2aaa] sm:ml-0 sm:max-w-2xl sm:text-left sm:text-base">
                   One shared list for everyone. Add, check, and delete items
                   together in real time.
                 </p>
