@@ -99,6 +99,7 @@ export default function HomeClient() {
   );
   const [origin, setOrigin] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
+  const [pendingDelete, setPendingDelete] = useState<ListItem | null>(null);
 
   const normalizeQuantity = (value: string | number) => {
     const parsed = Math.floor(Number(value));
@@ -283,6 +284,16 @@ export default function HomeClient() {
     }, DELETE_ANIMATION_MS);
   };
 
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) {
+      return;
+    }
+
+    const itemId = pendingDelete.id;
+    setPendingDelete(null);
+    await handleDelete(itemId);
+  };
+
   const handleClearAll = async () => {
     if (!roomId) {
       return;
@@ -336,17 +347,17 @@ export default function HomeClient() {
       <div className="relative z-10 min-h-screen w-full px-6 py-8 sm:px-10 sm:py-12">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <header className="flex flex-col gap-4 pt-4 sm:pt-8">
-            <div className="flex w-full items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:justify-start sm:text-sm">
+            <div className="ml-auto flex w-full max-w-[26ch] items-center justify-end text-xs uppercase tracking-[0.3em] text-[#5b2aaa] sm:ml-0 sm:max-w-none sm:justify-start sm:text-sm">
               <span className="rounded-full border border-[#bfa7ff] bg-white/70 px-3 py-1 text-[10px] text-[#5b2aaa] sm:px-4 sm:text-sm">
                 Kuromi List
               </span>
             </div>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1 className="ml-auto max-w-[22ch] text-right text-[20px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
+                <h1 className="ml-auto max-w-[26ch] text-right text-[20px] leading-snug text-[#2a1248] sm:ml-0 sm:max-w-none sm:text-left sm:text-5xl">
                   Shareable shopping magic with a Kuromi edge.
                 </h1>
-                <p className="mt-3 ml-auto max-w-2xl text-right text-[12px] text-[#5b2aaa] sm:ml-0 sm:text-left sm:text-base">
+                <p className="mt-3 ml-auto max-w-[26ch] text-right text-[12px] text-[#5b2aaa] sm:ml-0 sm:max-w-2xl sm:text-left sm:text-base">
                   One shared list for everyone. Add, check, and delete items
                   together in real time.
                 </p>
@@ -354,7 +365,7 @@ export default function HomeClient() {
             </div>
           </header>
 
-          <section className="-mt-3 relative overflow-hidden rounded-[32px] border border-[#6b2cff]/40 bg-black/60 shadow-[0_35px_80px_rgba(11,6,20,0.65)] sm:mt-0">
+          <section className="-mt-6 relative overflow-hidden rounded-[32px] border border-[#6b2cff]/40 bg-black/60 shadow-[0_35px_80px_rgba(11,6,20,0.65)] sm:mt-0">
             <div className="absolute inset-0 kuromi-pattern opacity-60" />
             <div className="absolute inset-0 border border-[#8c4bff]/45 glow-pulse" />
             <div className="relative z-10 flex flex-col gap-6 p-6 sm:p-10">
@@ -451,7 +462,7 @@ export default function HomeClient() {
                     return (
                       <li
                         key={item.id}
-                        className={`grid grid-cols-[36px_minmax(0,1fr)_96px_32px] items-center gap-2 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-4 py-4 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:grid-cols-[48px_minmax(0,1fr)_auto_40px] sm:gap-3 sm:px-4 sm:py-3 ${
+                        className={`grid grid-cols-[32px_minmax(0,1fr)_auto_30px] items-center gap-2 rounded-2xl border border-[#6b2cff]/30 bg-[#c6a6ff]/10 px-4 py-4 text-[#f8f4ff] shadow-[0_12px_30px_rgba(11,6,20,0.35)] transition sm:grid-cols-[48px_minmax(0,1fr)_auto_40px] sm:gap-3 sm:px-4 sm:py-3 ${
                           isRemoving
                             ? "animate-[slideAway_220ms_ease-in_forwards]"
                             : "animate-[floatIn_520ms_ease-out]"
@@ -462,7 +473,7 @@ export default function HomeClient() {
                           type="button"
                           onClick={() => handleToggle(item)}
                           aria-pressed={item.completed}
-                          className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border sm:h-12 sm:w-12 ${
+                          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border sm:h-12 sm:w-12 ${
                             item.completed
                               ? "border-[#8c4bff] bg-[#8c4bff] text-white shadow-[0_0_16px_rgba(140,75,255,0.8)]"
                               : "border-[#c6a6ff]/50 bg-black/60 text-[#c6a6ff]"
@@ -472,7 +483,7 @@ export default function HomeClient() {
                         </button>
                         <div className="min-w-0 flex-1">
                           <p
-                            className={`break-words pr-1 text-[15px] leading-snug sm:text-lg ${
+                            className={`break-words pr-1 text-[14px] leading-snug sm:text-lg ${
                               item.completed
                                 ? "text-[#c6a6ff] line-through opacity-60"
                                 : "text-[#f8f4ff]"
@@ -490,7 +501,7 @@ export default function HomeClient() {
                                 Math.max(1, item.quantity - 1),
                               )
                             }
-                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de] sm:h-8 sm:w-8"
+                            className="flex h-6 w-6 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de] sm:h-8 sm:w-8"
                             aria-label={`Decrease quantity for ${item.text}`}
                           >
                             -
@@ -515,12 +526,12 @@ export default function HomeClient() {
                                 handleQuantityCommit(item);
                               }
                             }}
-                            className="h-8 w-10 rounded-lg border border-[#6b2cff]/40 bg-black/60 px-1 text-center text-xs text-[#f8f4ff] focus:border-[#f5b0de] focus:outline-none sm:h-9 sm:w-16 sm:px-2 sm:text-sm"
+                            className="h-7 w-9 rounded-lg border border-[#6b2cff]/40 bg-black/60 px-1 text-center text-xs text-[#f8f4ff] focus:border-[#f5b0de] focus:outline-none sm:h-9 sm:w-16 sm:px-2 sm:text-sm"
                           />
                           <button
                             type="button"
                             onClick={() => updateQuantity(item, item.quantity + 1)}
-                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de] sm:h-8 sm:w-8"
+                            className="flex h-6 w-6 items-center justify-center rounded-lg border border-[#6b2cff]/50 text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-[#f5b0de] sm:h-8 sm:w-8"
                             aria-label={`Increase quantity for ${item.text}`}
                           >
                             +
@@ -528,8 +539,8 @@ export default function HomeClient() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleDelete(item.id)}
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-[#f5b0de]/50 text-[#f5b0de] transition hover:border-[#f5b0de] hover:text-white sm:h-10 sm:w-10"
+                          onClick={() => setPendingDelete(item)}
+                          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border border-[#f5b0de]/50 text-[#f5b0de] transition hover:border-[#f5b0de] hover:text-white sm:h-10 sm:w-10"
                           aria-label={`Delete ${item.text}`}
                         >
                           <SkullIcon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -543,6 +554,51 @@ export default function HomeClient() {
           </section>
         </div>
       </div>
+      {pendingDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default bg-black/70 backdrop-blur-sm"
+            onClick={() => setPendingDelete(null)}
+            aria-label="Close delete confirmation"
+          />
+          <div className="relative w-full max-w-sm rounded-[28px] border border-[#8c4bff]/50 bg-[#120b24]/95 p-6 text-[#f8f4ff] shadow-[0_20px_40px_rgba(11,6,20,0.7)]">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#6b2cff]/30 text-[#f5b0de] shadow-[0_0_18px_rgba(140,75,255,0.5)]">
+                <SkullIcon className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-base font-semibold text-[#f8f4ff]">
+                  Delete this item?
+                </p>
+                <p className="mt-1 text-sm text-[#c6a6ff]">
+                  &quot;{pendingDelete.text}&quot; will be removed for everyone.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingDelete(null)}
+                className="h-10 rounded-2xl border border-[#8c4bff]/50 px-4 text-sm font-semibold text-[#c6a6ff] transition hover:border-[#f5b0de] hover:text-white"
+              >
+                Keep
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                className="h-10 rounded-2xl bg-[#f5b0de] px-4 text-sm font-semibold text-[#1a0f2e] shadow-[0_0_16px_rgba(245,176,222,0.7)] transition hover:bg-[#f8c8ee]"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
